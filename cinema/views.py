@@ -148,7 +148,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         )
         if authenticated_user:
             self.queryset = self.queryset.filter(user=authenticated_user)
-        return self.queryset
+            return self.queryset
+        return self.queryset.none()
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
