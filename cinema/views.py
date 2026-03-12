@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from django.db.models import F, Count
 
 from cinema.models import (
     Genre,
@@ -106,9 +107,16 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
                 self.queryset = self.queryset.filter(
                     movie=movie_filter
                 )
-        return self.queryset.select_related(
+        self.queryset = self.queryset.annotate(
+            tickets_available=(
+                F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
+                - Count("tickets")
+            )
+        )
+        self.queryset = self.queryset.select_related(
             "movie", "cinema_hall"
         )
+        return self.queryset
 
 
 class OrderViewSet(viewsets.ModelViewSet):
