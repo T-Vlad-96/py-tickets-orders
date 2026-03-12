@@ -146,7 +146,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         authenticated_user = (
             self.request.user if self.request.user.is_authenticated else None
         )
-        self.queryset = self.queryset.filter(user=authenticated_user)
+        if authenticated_user:
+            self.queryset = self.queryset.filter(user=authenticated_user)
         return self.queryset
 
     def perform_create(self, serializer):
